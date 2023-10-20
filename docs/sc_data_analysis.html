@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Givanna Putri" />
+
+<meta name="date" content="2023-10-18" />
+
+<title>scRNAseq data analysis</title>
+
+<script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">NextClone-analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">scRNAseq data analysis</h1>
+<h4 class="author">Givanna Putri</h4>
+<h4 class="date">2023-10-18</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2023-10-20
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>NextClone-analysis/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R
+Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20231011code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20231011)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20231011code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20231011)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstronge8b74da">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong> e8b74da
+</a>
+</p>
+</div>
+<div id="strongRepositoryversionstronge8b74da"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version e8b74da.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  .DS_Store
+    Untracked:  analysis/NGS_data_analysis.Rmd
+    Untracked:  analysis/sc_data_analysis.Rmd
+    Untracked:  data/.DS_Store
+    Untracked:  data/cellranger_out/
+    Untracked:  data/nextclone_out/
+    Untracked:  data/pycashier_out/
+
+Unstaged changes:
+    Modified:   analysis/index.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Working directory for NextClone run:
+<code>/vast/projects/Goel_senescence/nextclone_dev/07_analysis/pilot_dataset/02_run_nextclone/output_20231016</code></p>
+<pre class="r"><code>library(data.table)
+library(ggplot2)
+library(scales)
+library(ggrepel)
+library(DropletUtils)
+library(treemapify)</code></pre>
+<p>Load data</p>
+<pre class="r"><code>clones &lt;- fread(&quot;data/nextclone_out/sc_clone_barcodes.csv&quot;)</code></pre>
+<p>Wrangle the data so we have cell,clone,n_reads where n_reads refer to
+the number of times the cell,clone combination have been seen.</p>
+<pre class="r"><code>clones_exp &lt;- clones[, .(n_reads = .N), by=c(&quot;CellBarcode&quot;, &quot;CloneBarcode&quot;)]</code></pre>
+<p>How many cells have exactly 1 clone barcode found?</p>
+<pre class="r"><code># First count, for each cell, how many different clone barcodes are found.
+barcode_diversity_per_cell &lt;- clones_exp[, .(n_clone_barcode = .N), by=&#39;CellBarcode&#39;]
+# 11,289, similar to what we found before, 11,379
+barcode_diversity_per_cell[n_clone_barcode == 1, .N]</code></pre>
+<pre><code>[1] 11289</code></pre>
+<p>How many cells we can find the clone barcodes for?</p>
+<pre class="r"><code># 14,270, about 180 cells less (previous numbers were 14,450). 
+nrow(barcode_diversity_per_cell)</code></pre>
+<pre><code>[1] 14270</code></pre>
+<p>Plot the distribution of the clone barcode diversity, i.e. how many
+cells have x number of clone barcodes.</p>
+<pre class="r"><code>ggplot(barcode_diversity_per_cell, aes(x=factor(n_clone_barcode)))+
+    geom_bar(stat=&quot;count&quot;, fill=&quot;steelblue&quot;)+
+    theme_minimal() +
+    theme_bw(base_size = 16) + 
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    scale_y_continuous(breaks = pretty_breaks(n = 15), labels = comma) +
+    labs(
+        y = &quot;Number of cells&quot;,
+        x = &quot;Number of clone barcodes&quot;,
+        title = &quot;Distribution of cells by clone barcode counts&quot;,
+        subtitle = &quot;How many cells have 1,2,3, etc. clone barcodes&quot;
+    )</code></pre>
+<p><img src="figure/sc_data_analysis.Rmd/unnamed-chunk-6-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>Hmm we have more cells with exactly 1 clone barcode. Good I
+guess?</p>
+</div>
+<div id="incorporating-single-cell-data" class="section level1">
+<h1>Incorporating single cell data</h1>
+<p>The above analysis has only looked at the cells where we found the
+clone barcode. We need to cross it with the output of cell ranger as
+some of those cells are bound to be just ambient droplet.</p>
+<pre class="r"><code>sce &lt;- read10xCounts(&quot;data/cellranger_out/filtered_feature_bc_matrix&quot;)</code></pre>
+<pre><code>as(&lt;dgTMatrix&gt;, &quot;dgCMatrix&quot;) is deprecated since Matrix 1.5-0; do as(., &quot;CsparseMatrix&quot;) instead</code></pre>
+<pre class="r"><code>sce</code></pre>
+<pre><code>class: SingleCellExperiment 
+dim: 36601 7828 
+metadata(1): Samples
+assays(1): counts
+rownames(36601): ENSG00000243485 ENSG00000237613 ... ENSG00000278817
+  ENSG00000277196
+rowData names(3): ID Symbol Type
+colnames: NULL
+colData names(2): Sample Barcode
+reducedDimNames(0):
+mainExpName: NULL
+altExpNames(0):</code></pre>
+<p>Get the 10x cell barcode.</p>
+<pre class="r"><code>valid_cells_10x &lt;- colData(sce)$Barcode</code></pre>
+<p>Intersect the 10x cell barcode to isolate those that have clone
+barcodes.</p>
+<pre class="r"><code>valid_cells_with_clones_10x &lt;- intersect(
+    x = unique(clones_exp$CellBarcode),
+    y = valid_cells_10x
+)
+# So we have 5,214 cells that we found the clone barcodes for.
+# That is out of 7,828 in our data.
+length(valid_cells_with_clones_10x)</code></pre>
+<pre><code>[1] 5214</code></pre>
+<pre class="r"><code># As a proportion? 0.67
+length(valid_cells_with_clones_10x) / ncol(sce)</code></pre>
+<pre><code>[1] 0.6660705</code></pre>
+<p>Isolate those cell barcodes.</p>
+<pre class="r"><code># valid clones = all clone barcodes for valid cells (deemed by cellranger)
+valid_cell_clone_barcodes &lt;- clones_exp[CellBarcode %in% valid_cells_with_clones_10x]</code></pre>
+<p>Tree map to show the proportion of 10x cells that have 0, 1, 2, ..
+clones found.</p>
+<pre class="r"><code>clone_count_per_cell &lt;- valid_cell_clone_barcodes[, .(n_clone_barcode = .N), by=&#39;CellBarcode&#39;]
+
+# we will add in those valid cells which we can&#39;t find any clone barcodes for, and
+# assign n_clone_barcode as none
+valid_cells_without_clones_10x &lt;- setdiff(
+    x = valid_cells_10x,
+    y = unique(clones_exp$CellBarcode)
+)
+
+
+# Convert the n_clone_barcode that are &gt; 10 to actually &gt; 10, then append the 0s in for cells which we can&#39;t find
+# the clone barcode for.
+clone_count_per_cell_inc_zeros &lt;- copy(clone_count_per_cell)
+clone_count_per_cell_inc_zeros[, n_clone_barcode := ifelse(n_clone_barcode &gt; 10, &quot;&gt; 10&quot;, as.character(n_clone_barcode))]
+
+clone_count_per_cell_inc_zeros &lt;- rbind(
+    clone_count_per_cell_inc_zeros,
+    data.table(
+        CellBarcode = valid_cells_without_clones_10x, 
+        n_clone_barcode = rep(0, length(valid_cells_without_clones_10x))
+    )
+)
+
+# the level for the clone count per cell
+clone_count_per_cell_level &lt;- c(as.character(seq(0, 10)), &quot;&gt; 10&quot;)
+clone_count_per_cell_inc_zeros[, n_clone_barcode := factor(n_clone_barcode, levels = clone_count_per_cell_level)]
+
+# have to actually count the number of cells with 0, 1, 2, .. clone barcodes
+n_cells_with_clone_count &lt;- clone_count_per_cell_inc_zeros[, .(n_cells = .N), by=n_clone_barcode]
+n_cells_with_clone_count &lt;- n_cells_with_clone_count[order(n_clone_barcode)]
+
+n_cells_with_clone_count[, perc_and_n_cells := paste0(
+    prettyNum(n_cells, big.mark = &quot;,&quot;), &quot; (&quot;, 
+    round(100 * n_cells / dim(sce)[2], 1), 
+    &quot;%)&quot;)]
+
+
+ggplot(n_cells_with_clone_count, aes(fill = n_clone_barcode, area = n_cells, label = perc_and_n_cells)) +
+  geom_treemap() + 
+    geom_treemap_text(colour = &quot;black&quot;, 
+                    place = &quot;centre&quot;) +
+  labs(
+      title = &quot;Distribution of Cells by Number of Detected Clone Barcodes&quot;,
+      subtitle = paste(&quot;Of the&quot;, prettyNum(dim(sce)[2], big.mark = &quot;,&quot;), &quot;cells, how many have 0, 1, 2 clone barcodes&quot;),
+      fill = &quot;Number of clone barcodes found&quot;
+  ) +
+    theme(legend.position = &quot;bottom&quot;) +
+    scale_fill_brewer(palette = &quot;Set3&quot;)</code></pre>
+<p><img src="figure/sc_data_analysis.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="digging-into-cells-with-multiple-clone-barcodes"
+class="section level1">
+<h1>Digging into cells with multiple clone barcodes</h1>
+<p>Cells with multiple clone barcodes may well be doublets. But the
+point now is we want to see what are the expression of the 1st ranked,
+2nd ranked, etc. clone barcode.</p>
+<pre class="r"><code>multiclone_cells &lt;- clone_count_per_cell[n_clone_barcode &gt; 1,]$CellBarcode
+
+# The number of reads for each clone, for cells with multiple clones
+multiclone_cell_read_counts &lt;- valid_cell_clone_barcodes[CellBarcode %in% multiclone_cells]
+
+# Order the table so for each cell barcode, we have clone with the most reads at the top
+multiclone_cell_read_counts &lt;- multiclone_cell_read_counts[order(CellBarcode, -n_reads)]
+
+# Add ranking to the clones based on the number of reads
+multiclone_cell_read_counts[, ranking := frank(-n_reads, ties.method = &quot;random&quot;), by=CellBarcode]</code></pre>
+<p>How many cells does the 1st ranked clone barcode made up more than
+50% of the reads mapped to the cell?</p>
+<pre class="r"><code># calculate proportion of reads first
+multiclone_cell_read_counts[, prop_reads := n_reads / sum(n_reads), by=CellBarcode]
+
+# Now check the numbers
+
+# 78.2% if &gt;= 0.5
+nrow(multiclone_cell_read_counts[ranking == 1 &amp; prop_reads &gt;= 0.5]) / length(multiclone_cells)</code></pre>
+<pre><code>[1] 0.7818575</code></pre>
+<pre class="r"><code># actual number? 1,810
+nrow(multiclone_cell_read_counts[ranking == 1 &amp; prop_reads &gt;= 0.5])</code></pre>
+<pre><code>[1] 1810</code></pre>
+<pre class="r"><code># 70.4% if &gt; 0.5
+nrow(multiclone_cell_read_counts[ranking == 1 &amp; prop_reads &gt; 0.5]) / length(multiclone_cells)</code></pre>
+<pre><code>[1] 0.7045356</code></pre>
+<pre class="r"><code># actual number? 1,631
+nrow(multiclone_cell_read_counts[ranking == 1 &amp; prop_reads &gt; 0.5])</code></pre>
+<pre><code>[1] 1631</code></pre>
+<pre class="r"><code># plot as ggplot?
+# restrict to just top 10
+multiclone_cell_read_counts_top10 &lt;- multiclone_cell_read_counts[ranking &lt;= 10,]</code></pre>
+<pre class="r"><code>ggplot(multiclone_cell_read_counts_top10, aes(x=factor(ranking), y=prop_reads)) +
+    geom_violin(aes(fill = factor(ranking))) +
+    theme_bw(base_size=18) +
+    scale_y_continuous(breaks=pretty_breaks(n=20)) +
+    labs(x = &#39;Ranking&#39;,
+         fill = &#39;Ranking&#39;,
+         y = &#39;Proportion of reads&#39;,
+         title = &#39;Read Distribution of Clones in Multiclone Cells&#39;,
+         subtitle = &quot;Only for top 10 most abundant clones&quot;
+         ) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))</code></pre>
+<p><img src="figure/sc_data_analysis.Rmd/unnamed-chunk-14-1.png" width="768" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.2.3 (2023-03-15)
+Platform: aarch64-apple-darwin20 (64-bit)
+Running under: macOS 14.0
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats4    stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+ [1] treemapify_2.5.6            DropletUtils_1.18.1        
+ [3] SingleCellExperiment_1.20.0 SummarizedExperiment_1.28.0
+ [5] Biobase_2.58.0              GenomicRanges_1.50.2       
+ [7] GenomeInfoDb_1.34.9         IRanges_2.32.0             
+ [9] S4Vectors_0.36.1            BiocGenerics_0.44.0        
+[11] MatrixGenerics_1.10.0       matrixStats_0.63.0         
+[13] ggrepel_0.9.3               scales_1.2.1               
+[15] ggplot2_3.4.1               data.table_1.14.8          
+[17] workflowr_1.7.0            
+
+loaded via a namespace (and not attached):
+ [1] httr_1.4.4                edgeR_3.40.2             
+ [3] sass_0.4.5                jsonlite_1.8.4           
+ [5] scuttle_1.8.4             DelayedMatrixStats_1.20.0
+ [7] R.utils_2.12.2            bslib_0.4.2              
+ [9] getPass_0.2-2             highr_0.10               
+[11] dqrng_0.3.0               GenomeInfoDbData_1.2.9   
+[13] yaml_2.3.7                pillar_1.8.1             
+[15] lattice_0.20-45           limma_3.54.1             
+[17] glue_1.6.2                beachmat_2.14.0          
+[19] digest_0.6.31             RColorBrewer_1.1-3       
+[21] promises_1.2.0.1          XVector_0.38.0           
+[23] colorspace_2.1-0          htmltools_0.5.4          
+[25] httpuv_1.6.9              Matrix_1.5-3             
+[27] R.oo_1.25.0               pkgconfig_2.0.3          
+[29] zlibbioc_1.44.0           processx_3.8.0           
+[31] HDF5Array_1.26.0          whisker_0.4.1            
+[33] later_1.3.0               BiocParallel_1.32.5      
+[35] git2r_0.31.0              tibble_3.1.8             
+[37] farver_2.1.1              generics_0.1.3           
+[39] cachem_1.0.6              withr_2.5.0              
+[41] cli_3.6.1                 magrittr_2.0.3           
+[43] evaluate_0.20             ps_1.7.2                 
+[45] R.methodsS3_1.8.2         fs_1.6.1                 
+[47] fansi_1.0.4               tools_4.2.3              
+[49] lifecycle_1.0.3           stringr_1.5.0            
+[51] Rhdf5lib_1.20.0           locfit_1.5-9.7           
+[53] munsell_0.5.0             DelayedArray_0.24.0      
+[55] callr_3.7.3               compiler_4.2.3           
+[57] jquerylib_0.1.4           rlang_1.0.6              
+[59] rhdf5_2.42.0              grid_4.2.3               
+[61] RCurl_1.98-1.10           rhdf5filters_1.10.0      
+[63] rstudioapi_0.14           bitops_1.0-7             
+[65] rmarkdown_2.20            gtable_0.3.1             
+[67] codetools_0.2-19          R6_2.5.1                 
+[69] knitr_1.42                dplyr_1.1.0              
+[71] fastmap_1.1.0             utf8_1.2.3               
+[73] rprojroot_2.0.3           stringi_1.7.12           
+[75] parallel_4.2.3            Rcpp_1.0.10              
+[77] ggfittext_0.10.1          vctrs_0.5.2              
+[79] tidyselect_1.2.0          xfun_0.39                
+[81] sparseMatrixStats_1.10.0 </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

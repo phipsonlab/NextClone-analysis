@@ -1,0 +1,234 @@
+---
+title: "scRNAseq data analysis"
+author: "Givanna Putri"
+date: "2023-10-18"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Working directory for NextClone run: `/vast/projects/Goel_senescence/nextclone_dev/07_analysis/pilot_dataset/02_run_nextclone/output_20231016`
+
+
+```{r message=FALSE, warning=FALSE}
+library(data.table)
+library(ggplot2)
+library(scales)
+library(ggrepel)
+library(DropletUtils)
+library(treemapify)
+```
+
+Load data
+
+```{r}
+clones <- fread("data/nextclone_out/sc_clone_barcodes.csv")
+```
+
+Wrangle the data so we have cell,clone,n_reads where n_reads refer to the number
+of times the cell,clone combination have been seen.
+
+```{r}
+clones_exp <- clones[, .(n_reads = .N), by=c("CellBarcode", "CloneBarcode")]
+```
+
+How many cells have exactly 1 clone barcode found?
+
+```{r}
+# First count, for each cell, how many different clone barcodes are found.
+barcode_diversity_per_cell <- clones_exp[, .(n_clone_barcode = .N), by='CellBarcode']
+# 11,289, similar to what we found before, 11,379
+barcode_diversity_per_cell[n_clone_barcode == 1, .N]
+```
+
+How many cells we can find the clone barcodes for?
+
+```{r}
+# 14,270, about 180 cells less (previous numbers were 14,450). 
+nrow(barcode_diversity_per_cell)
+```
+
+Plot the distribution of the clone barcode diversity, i.e. how many cells have
+x number of clone barcodes.
+
+```{r fig.width=10, fig.height=5}
+ggplot(barcode_diversity_per_cell, aes(x=factor(n_clone_barcode)))+
+    geom_bar(stat="count", fill="steelblue")+
+    theme_minimal() +
+    theme_bw(base_size = 16) + 
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    scale_y_continuous(breaks = pretty_breaks(n = 15), labels = comma) +
+    labs(
+        y = "Number of cells",
+        x = "Number of clone barcodes",
+        title = "Distribution of cells by clone barcode counts",
+        subtitle = "How many cells have 1,2,3, etc. clone barcodes"
+    )
+```
+
+Hmm we have more cells with exactly 1 clone barcode. Good I guess?
+
+# Incorporating single cell data
+
+The above analysis has only looked at the cells where we found the clone barcode.
+We need to cross it with the output of cell ranger as some of those cells
+are bound to be just ambient droplet.
+
+```{r}
+sce <- read10xCounts("data/cellranger_out/filtered_feature_bc_matrix")
+sce
+```
+
+Get the 10x cell barcode.
+
+```{r}
+valid_cells_10x <- colData(sce)$Barcode
+```
+
+Intersect the 10x cell barcode to isolate those that have clone barcodes.
+
+```{r}
+valid_cells_with_clones_10x <- intersect(
+    x = unique(clones_exp$CellBarcode),
+    y = valid_cells_10x
+)
+# So we have 5,214 cells that we found the clone barcodes for.
+# That is out of 7,828 in our data.
+length(valid_cells_with_clones_10x)
+
+# As a proportion? 0.67
+length(valid_cells_with_clones_10x) / ncol(sce)
+```
+
+Isolate those cell barcodes.
+
+```{r}
+# valid clones = all clone barcodes for valid cells (deemed by cellranger)
+valid_cell_clone_barcodes <- clones_exp[CellBarcode %in% valid_cells_with_clones_10x]
+```
+
+Tree map to show the proportion of 10x cells that have 0, 1, 2, .. clones found.
+
+```{r}
+
+clone_count_per_cell <- valid_cell_clone_barcodes[, .(n_clone_barcode = .N), by='CellBarcode']
+
+# we will add in those valid cells which we can't find any clone barcodes for, and
+# assign n_clone_barcode as none
+valid_cells_without_clones_10x <- setdiff(
+    x = valid_cells_10x,
+    y = unique(clones_exp$CellBarcode)
+)
+
+
+# Convert the n_clone_barcode that are > 10 to actually > 10, then append the 0s in for cells which we can't find
+# the clone barcode for.
+clone_count_per_cell_inc_zeros <- copy(clone_count_per_cell)
+clone_count_per_cell_inc_zeros[, n_clone_barcode := ifelse(n_clone_barcode > 10, "> 10", as.character(n_clone_barcode))]
+
+clone_count_per_cell_inc_zeros <- rbind(
+    clone_count_per_cell_inc_zeros,
+    data.table(
+        CellBarcode = valid_cells_without_clones_10x, 
+        n_clone_barcode = rep(0, length(valid_cells_without_clones_10x))
+    )
+)
+
+# the level for the clone count per cell
+clone_count_per_cell_level <- c(as.character(seq(0, 10)), "> 10")
+clone_count_per_cell_inc_zeros[, n_clone_barcode := factor(n_clone_barcode, levels = clone_count_per_cell_level)]
+
+# have to actually count the number of cells with 0, 1, 2, .. clone barcodes
+n_cells_with_clone_count <- clone_count_per_cell_inc_zeros[, .(n_cells = .N), by=n_clone_barcode]
+n_cells_with_clone_count <- n_cells_with_clone_count[order(n_clone_barcode)]
+
+n_cells_with_clone_count[, perc_and_n_cells := paste0(
+    prettyNum(n_cells, big.mark = ","), " (", 
+    round(100 * n_cells / dim(sce)[2], 1), 
+    "%)")]
+
+
+ggplot(n_cells_with_clone_count, aes(fill = n_clone_barcode, area = n_cells, label = perc_and_n_cells)) +
+  geom_treemap() + 
+    geom_treemap_text(colour = "black", 
+                    place = "centre") +
+  labs(
+      title = "Distribution of Cells by Number of Detected Clone Barcodes",
+      subtitle = paste("Of the", prettyNum(dim(sce)[2], big.mark = ","), "cells, how many have 0, 1, 2 clone barcodes"),
+      fill = "Number of clone barcodes found"
+  ) +
+    theme(legend.position = "bottom") +
+    scale_fill_brewer(palette = "Set3")
+
+
+```
+
+
+# Digging into cells with multiple clone barcodes
+
+Cells with multiple clone barcodes may well be doublets.
+But the point now is we want to see what are the expression of the 1st ranked,
+2nd ranked, etc. clone barcode.
+
+```{r}
+multiclone_cells <- clone_count_per_cell[n_clone_barcode > 1,]$CellBarcode
+
+# The number of reads for each clone, for cells with multiple clones
+multiclone_cell_read_counts <- valid_cell_clone_barcodes[CellBarcode %in% multiclone_cells]
+
+# Order the table so for each cell barcode, we have clone with the most reads at the top
+multiclone_cell_read_counts <- multiclone_cell_read_counts[order(CellBarcode, -n_reads)]
+
+# Add ranking to the clones based on the number of reads
+multiclone_cell_read_counts[, ranking := frank(-n_reads, ties.method = "random"), by=CellBarcode]
+```
+
+How many cells does the 1st ranked clone barcode made up more than 50% of the reads
+mapped to the cell?
+
+```{r}
+# calculate proportion of reads first
+multiclone_cell_read_counts[, prop_reads := n_reads / sum(n_reads), by=CellBarcode]
+
+# Now check the numbers
+
+# 78.2% if >= 0.5
+nrow(multiclone_cell_read_counts[ranking == 1 & prop_reads >= 0.5]) / length(multiclone_cells)
+
+# actual number? 1,810
+nrow(multiclone_cell_read_counts[ranking == 1 & prop_reads >= 0.5])
+
+# 70.4% if > 0.5
+nrow(multiclone_cell_read_counts[ranking == 1 & prop_reads > 0.5]) / length(multiclone_cells)
+
+# actual number? 1,631
+nrow(multiclone_cell_read_counts[ranking == 1 & prop_reads > 0.5])
+
+# plot as ggplot?
+# restrict to just top 10
+multiclone_cell_read_counts_top10 <- multiclone_cell_read_counts[ranking <= 10,]
+```
+
+```{r fig.width=8, fig.height=6}
+
+ggplot(multiclone_cell_read_counts_top10, aes(x=factor(ranking), y=prop_reads)) +
+    geom_violin(aes(fill = factor(ranking))) +
+    theme_bw(base_size=18) +
+    scale_y_continuous(breaks=pretty_breaks(n=20)) +
+    labs(x = 'Ranking',
+         fill = 'Ranking',
+         y = 'Proportion of reads',
+         title = 'Read Distribution of Clones in Multiclone Cells',
+         subtitle = "Only for top 10 most abundant clones"
+         ) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+
+
+
+
+
+

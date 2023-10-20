@@ -1,0 +1,242 @@
+---
+title: "NGS data analysis"
+author: "Givanna Putri"
+date: "2023-10-11"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Analysis for the 8k and 10k library of MCF7 cell line tagged with ClonMapper protocol.
+
+Working directory for NextClone run: `/vast/projects/Goel_senescence/nextclone_dev/07_analysis/ngs_v1/run_nextclone/output_20231016`
+
+```{r}
+library(CloneDetective)
+library(data.table)
+library(ggplot2)
+library(scales)
+```
+
+# Read in data
+
+NextClone and pycashier pipeline:
+
+```{r}
+clones_nxclone <- fread("data/nextclone_out/ngs_clone_barcode_counts.csv")
+# The samples in the sample_name column is way too complicated. 
+# Let's create a new column.
+clones_nxclone[, sample_name_simple := gsub("vexGFP-", "", gsub("_.*", "", sample_name))]
+clones_nxclone[, sample_name_simple := factor(sample_name_simple, levels = c("8k", "10k"))]
+
+clones_pycashier <- lapply(c("8k", "10k"), function(samp) {
+  # read_count as the count column so we can use count_retained_clones
+  dt <- fread(
+    file = paste0("data/pycashier_out/", samp, ".tsv"),
+    header = FALSE,
+    col.names = c("clone_barcode", "read_count")
+  )
+  dt[, sample := samp]
+  return(dt)
+})
+
+clones_pycashier <- rbindlist(clones_pycashier)
+clones_pycashier[, sample := factor(sample, levels = c("8k", "10k"))]
+```
+
+# Number of unique barcodes
+
+Count the number of unique barcodes with at least x number of cells.
+
+```{r}
+
+thresholds <- c(1, 20, 200, 1000)
+
+n_barcodes_nxclone <- count_retained_clones(
+    count_data = clones_nxclone,
+    thresholds = thresholds,
+    grouping_col = "sample_name_simple",
+    count_column = "read_count"
+)
+n_barcodes_nxclone[, tool := 'NextClone']
+setnames(n_barcodes_nxclone, "sample_name_simple", "sample")
+
+n_barcodes_pycashier <- count_retained_clones(
+    count_data = clones_pycashier,
+    thresholds = thresholds,
+    grouping_col = "sample",
+    count_column = "read_count"
+)
+n_barcodes_pycashier[, tool := 'PyCashier']
+
+n_barcodes <- rbind(n_barcodes_nxclone, n_barcodes_pycashier)
+```
+
+```{r fig.width=10, fig.height=8}
+n_barcodes_long <- melt(n_barcodes, id.vars = c("sample", "tool"), 
+                        variable.name = "filtering_threshold",
+                        value.name = "n_barcode")
+
+filtering_threshold_levels <- paste(">=", thresholds, "cells")
+n_barcodes_long[, filtering_threshold := factor(
+  gsub("_"," ",gsub("at_least_", ">= ", filtering_threshold)),
+  levels = filtering_threshold_levels
+)]
+
+ggplot(n_barcodes_long, aes(x=factor(filtering_threshold), y=n_barcode, fill=tool)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  theme_bw(base_size = 18) +
+  theme(
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
+    legend.position="bottom"
+  ) +
+  facet_wrap(~ sample) +
+  scale_y_continuous(breaks = pretty_breaks(n=10), label = label_comma(accuracy = 1)) +
+  labs(
+    y = "Number of barcodes",
+    x = "Filtering thresholds",
+    fill = "Pipeline",
+    title = "Number of barcodes retrieved for 8k and 10k NGS data"
+  )
+```
+
+
+# Elbow plot
+
+To show the proportion of barcode's frequency.
+
+```{r}
+clones_nxclone_filtered <- remove_clones_below_threshold(
+    count_data = clones_nxclone,
+    threshold = 20,
+    count_column = "read_count"
+)
+clones_nxclone_filtered <- convert_count_to_proportion(
+  count_data = clones_nxclone_filtered,
+  grouping_col = "sample_name_simple",
+  count_column = "read_count"
+)
+```
+
+
+```{r}
+plt <- draw_elbow_plot(
+  count_data = clones_nxclone_filtered, 
+  facet_column = "sample_name_simple",
+  y_axis_column = "read_proportion"
+)
+plt <- plt +
+  geom_point(size=0.5, colour='red') +
+  labs(
+    title = "Proportion of reads assigned to each barcode",
+    subtitle = "Barcode IDs are numerically assigned in order of read proportion",
+    x = "Numerical barcode ID",
+    y = "Proportion of reads per library"
+  )
+plt
+```
+
+# Using NGS data to plan single cell experiment
+
+Let's say we want to sequence 10,000 cells. 
+Based on our NGS data, can we predict what will happen to our clone barcodes?
+Will we get enough representations?
+
+```{r}
+n_cells_sequenced <- 10000
+```
+
+Do projection by calculating proportion and multiply by amount of cells to be projected to.
+
+```{r}
+clones_nxclone_proportion <- projecting_clones(
+  count_data = clones_nxclone,
+  grouping_col = "sample_name_simple",
+  count_column = "read_count",
+  project_amnt = 10000
+)
+```
+
+How many cells we will get per clone?
+
+```{r}
+plt <- draw_elbow_plot(
+  count_data = clones_nxclone_proportion,
+  y_axis_column = 'projected_to_10000',
+  facet_column = 'sample_name_simple'
+) + 
+  geom_point(size = 0.5, colour='blue') +
+  labs(
+    y = 'Number of cells',
+    title = 'Number of cells assigned to each barcode',
+    subtitle = 'Cell counts computed after projection to 10,000 cells'
+  )
+plt
+```
+
+
+How many clones that contain at least 10, 20, 50, 100 cells?
+
+```{r}
+thresholds <- c(10, 20, 50, 100)
+proj_n_clones_retained <- count_retained_clones(
+  count_data = clones_nxclone_proportion,
+  thresholds = thresholds,
+  grouping_col = "sample_name_simple",
+  count_column = "projected_to_10000"
+)
+names(proj_n_clones_retained) <- c("sample", paste(">=", thresholds, "cells"))
+proj_n_clones_retained
+```
+
+
+What are the frequency of top 200 clone barcodes?
+We can present this by computing the number of cells tagged by top 200 clone barcodes.
+
+```{r}
+top_threshold <- 200
+```
+
+
+```{r}
+top_barcodes <- get_top_barcodes(
+  count_data = clones_nxclone_proportion,
+  count_column = "projected_to_10000",
+  grouping_col = "sample_name_simple",
+  top_threshold = top_threshold
+)
+```
+
+Create a line chart that show cumulative number of cells.
+
+```{r fig.width=10, fig.height=10}
+# TODO convert me to function
+top_barcodes <- top_barcodes[order(sample_name_simple, -projected_to_10000)]
+top_barcodes[, barcode_id := seq(1, top_threshold), by=sample_name_simple]
+top_barcodes[, cum_sum_projected_to_10000 := cumsum(projected_to_10000), by=sample_name_simple]
+
+ggplot(top_barcodes, aes(x=barcode_id, y=cum_sum_projected_to_10000, 
+                         group=sample_name_simple, colour = sample_name_simple)) +
+  geom_line(linewidth=1) +
+  theme_bw(base_size = 16) +
+  scale_y_continuous(breaks = pretty_breaks(n=10), labels = label_comma(accuracy = 1)) +
+  scale_x_continuous(breaks = pretty_breaks(n=10)) +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+    legend.position = "bottom"
+  ) +
+  labs(
+    y = "Number of cells",
+    x = "Barcode ID",
+    title = paste("Cumulative Number of cells for top", top_threshold, "clone barcodes"),
+    subtitle = "Number of cells computed after projection to 10,000 cells",
+    colour = "Library"
+  )
+
+
+```
+
+
+

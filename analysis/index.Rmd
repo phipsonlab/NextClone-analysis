@@ -1,5 +1,5 @@
 ---
-title: "Home"
+title: "NextClone analysis"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
@@ -8,4 +8,23 @@ editor_options:
   chunk_output_type: console
 ---
 
-Welcome to my research website.
+# Abstract {-}
+
+The study of clonal dynamics has fundamentally transformed our understanding of cellular heterogeneity and lineage trajectories. Recent advances in lineage-tracing methods, such as the ClonMapper or SPLINTR protocols combine DNA barcoding with single-cell RNA sequencing (scRNAseq), allowing biologists to not only trace the lineage and clonal evolution of individual cells but also analyse changes in their transcriptomic profile over time. However, despite these advances, there remains a gap in computational methods for efficient extraction and quantification of clonal barcodes from both barcoded scRNAseq data and DNA sequencing data. The latter is often termed as NGS data, and exclusively sequences clone barcode reads using Next Generation Sequencing (NGS). To address this, we introduce NextClone, a comprehensive Nextflow pipeline developed for this very purpose. Designed with scalability at its core, NextClone is capable of processing several samples concurrently, fully leveraging the vast resources in high-performance computing platforms by distributing the barcode extraction and quantification process for a given sample across multiple parallel jobs. Integral to its design is Flexiplex, a versatile and error-tolerant tool for assigning reads to a predetermined list of clonal barcodes. This allows NextClone to be used for any clonal barcoding approach where a list of known barcodes can be supplied to the pipeline. We successfully applied NextClone to scRNAseq and NGS datasets from an MCF7 breast cancer cell line tagged using the ClonMapper lineage-tracing protocol. Our results demonstrate its ability to precisely and robustly quantify clonal barcodes. NextClone is open-source and available on Github (https://github.com/phipsonlab/NextClone). 
+
+# Authors {-}
+
+Givanna Putri ^1^, Nichelle Pires ^2^, Nadia Davidson ^1^, Catherine Blyth ^2^, Aziz Al’Khafaji ^3^, Shom Goel ^2^, Belinda Phipson ^1^
+
+^1^ The Walter and Eliza Hall Institute of Medical Research, Parkville, VIC, Australia
+
+^2^ Peter MacCallum Cancer Centre and The Sir Peter MacCallum Department of Oncology, The University of Melbourne, Parkville, VIC, Australia
+
+^3^ Broad Institute of MIT and Harvard, Cambridge, Massachusetts, USA
+
+## Analysis
+
+1. [NGS data](NGS_data_analysis.html)
+2. [scRNAseq data](sc_data_analysis.html)
+
+
