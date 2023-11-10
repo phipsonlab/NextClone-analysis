@@ -1,0 +1,102 @@
+---
+title: "sc_data_analysis_withCloneDetective"
+author: "Givanna Putri"
+date: "2023-11-08"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Working directory for NextClone run: `/vast/projects/Goel_senescence/nextclone_dev/07_analysis/pilot_dataset/02_run_nextclone/output_20231108_v2`
+
+
+```{r message=FALSE, warning=FALSE}
+library(data.table)
+library(DropletUtils)
+library(CloneDetective)
+library(scater)
+```
+
+Load data
+
+```{r}
+raw_clone_data <- fread("data/nextclone_out/sc_clone_barcodes_20231109.csv")
+```
+
+Convert to expression
+```{r}
+cell_by_clone_mat <- generate_cell_clone_barcode_matrix(cell_clone_bcode_dt = raw_clone_data)
+```
+
+Incorporate the cell by gene matrix.
+
+```{r}
+sce <- read10xCounts("data/cellranger_out/filtered_feature_bc_matrix")
+sce
+```
+
+Compute few simple metrics like average library size per cell.
+Compute total transcript molecules detected per cell then compute average
+based on the number of cells detected.
+
+```{r}
+cell_qc_metrics <- perCellQCMetrics(sce)
+summary(cell_qc_metrics$sum)
+summary(cell_qc_metrics$detected)
+```
+
+
+Get the 10x cell barcode.
+
+```{r}
+valid_cells_10x <- colData(sce)$Barcode
+```
+
+Tree map to show the proportion of 10x cells that have 0, 1, 2, .. clones found.
+
+```{r}
+plt <- draw_treemap(
+    cell_by_clone_matrix = cell_by_clone_mat,
+    valid_cells_bcodes = valid_cells_10x
+)
+plt
+```
+
+# Assign clone barcodes to cells
+
+```{r}
+sce_with_clone <- assign_and_embed_clones(
+    cell_by_gene_mat = sce,
+    cell_clone_reads_dt = raw_clone_data,
+)
+colData(sce_with_clone)
+
+```
+
+Count how many cells assigned to most dominant clones.
+
+```{r}
+clone_bcode_criteria <- as.data.table(colData(sce_with_clone))
+clone_bcode_criteria <- data.table(table(clone_bcode_criteria$clone_barcode_criteria))
+
+# proportion. of cells with multiple clone barcodes?
+clone_bcode_criteria[, multiclone := ! V1 %in% c("single_clone", "no_clones_found")]
+clone_bcode_criteria[, .(prop = sum(N) / sum(clone_bcode_criteria$N)), by = multiclone]
+
+# proportion of multiclones assigned to most dominant clone?
+clone_bcode_criteria[, .(prop = N / sum(N)), by = multiclone]
+```
+
+Export the clone assignments as data.table which can later be saved.
+
+```{r}
+clone_assignments <- assign_and_embed_clones(
+    cell_by_gene_mat = sce,
+    cell_clone_reads_dt = raw_clone_data,
+    embed_to_mat = FALSE
+)
+head(clone_assignments)
+```
+
