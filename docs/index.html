@@ -302,7 +302,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-10-18
+<strong>Last updated:</strong> 2023-11-13
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -352,13 +352,15 @@ HTML.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstronge8b74da">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree9a79d31092da2ab7c6c9effa1ee8bd5210587224targetblank9a79d31a">
 <span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>Repository version:</strong> e8b74da
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/phipsonlab/NextClone-analysis/tree/9a79d31092da2ab7c6c9effa1ee8bd5210587224" target="_blank">9a79d31</a>
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstronge8b74da"
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree9a79d31092da2ab7c6c9effa1ee8bd5210587224targetblank9a79d31a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -367,7 +369,8 @@ and connecting the code version to the results is critical for
 reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version e8b74da.
+The results in this page were generated with repository version
+<a href="https://github.com/phipsonlab/NextClone-analysis/tree/9a79d31092da2ab7c6c9effa1ee8bd5210587224" target="_blank">9a79d31</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -382,20 +385,20 @@ were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    data/.DS_Store
+    Ignored:    data/cellranger_out/
+    Ignored:    data/nextclone_out/.DS_Store
 
 Untracked files:
-    Untracked:  .DS_Store
-    Untracked:  analysis/NGS_data_analysis.Rmd
-    Untracked:  analysis/sc_data_analysis.Rmd
-    Untracked:  data/.DS_Store
-    Untracked:  data/cellranger_out/
-    Untracked:  data/nextclone_out/
-    Untracked:  data/pycashier_out/
+    Untracked:  data/nextclone_out/dnaseq_clone_barcode_counts_20231109.csv
 
 Unstaged changes:
+    Modified:   analysis/DNAseq_data_analysis.Rmd
     Modified:   analysis/index.Rmd
+    Deleted:    data/nextclone_out/ngs_clone_barcode_counts_20231109.csv
 
 </code></pre>
 <p>
@@ -445,7 +448,41 @@ Message
 Rmd
 </td>
 <td>
-e8b74da
+<a href="https://github.com/phipsonlab/NextClone-analysis/blob/1662b0c96deb5f5949d8935c8a77990ddea7cb69/analysis/index.Rmd" target="_blank">1662b0c</a>
+</td>
+<td>
+Givanna Putri
+</td>
+<td>
+2023-10-20
+</td>
+<td>
+analysis for ozsinglecell 23
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/phipsonlab/NextClone-analysis/1662b0c96deb5f5949d8935c8a77990ddea7cb69/docs/index.html" target="_blank">1662b0c</a>
+</td>
+<td>
+Givanna Putri
+</td>
+<td>
+2023-10-20
+</td>
+<td>
+analysis for ozsinglecell 23
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/phipsonlab/NextClone-analysis/blob/e8b74da62dc546ed3c58e2547094c169571cd7ec/analysis/index.Rmd" target="_blank">e8b74da</a>
 </td>
 <td>
 Givanna Putri
@@ -466,34 +503,26 @@ Start workflowr project.
 </div>
 <div id="abstract" class="section level1 unnumbered">
 <h1 class="unnumbered">Abstract</h1>
-<p>The study of clonal dynamics has fundamentally transformed our
-understanding of cellular heterogeneity and lineage trajectories. Recent
-advances in lineage-tracing methods, such as the ClonMapper or SPLINTR
-protocols combine DNA barcoding with single-cell RNA sequencing
-(scRNAseq), allowing biologists to not only trace the lineage and clonal
-evolution of individual cells but also analyse changes in their
-transcriptomic profile over time. However, despite these advances, there
-remains a gap in computational methods for efficient extraction and
-quantification of clonal barcodes from both barcoded scRNAseq data and
-DNA sequencing data. The latter is often termed as NGS data, and
-exclusively sequences clone barcode reads using Next Generation
-Sequencing (NGS). To address this, we introduce NextClone, a
-comprehensive Nextflow pipeline developed for this very purpose.
-Designed with scalability at its core, NextClone is capable of
-processing several samples concurrently, fully leveraging the vast
-resources in high-performance computing platforms by distributing the
-barcode extraction and quantification process for a given sample across
-multiple parallel jobs. Integral to its design is Flexiplex, a versatile
-and error-tolerant tool for assigning reads to a predetermined list of
-clonal barcodes. This allows NextClone to be used for any clonal
-barcoding approach where a list of known barcodes can be supplied to the
-pipeline. We successfully applied NextClone to scRNAseq and NGS datasets
-from an MCF7 breast cancer cell line tagged using the ClonMapper
-lineage-tracing protocol. Our results demonstrate its ability to
-precisely and robustly quantify clonal barcodes. NextClone is
-open-source and available on Github (<a
-href="https://github.com/phipsonlab/NextClone"
-class="uri">https://github.com/phipsonlab/NextClone</a>).</p>
+<p>The study of clonal dynamics has significantly advanced our
+understanding of cellular heterogeneity and lineage trajectories. With
+recent developments in lineage-tracing protocols such as ClonMapper or
+SPLINTR, which combine DNA barcoding with single-cell RNA sequencing
+(scRNA-seq), biologists can trace the lineage and evolutionary paths of
+individual clones while simultaneously observing their transcriptomic
+changes over time. Here, we present NextClone and CloneDetective, an
+integrated highly scalable Nextflow pipeline and R package for efficient
+extraction and quantification of clonal barcodes from scRNA-seq data and
+DNA sequencing data tagged with lineage-tracing barcodes. We applied
+both NextClone and CloneDetective to data from a barcoded MCF7 cell
+line, and demonstrate their important role for advancing clonal analysis
+in the era of high-throughput sequencing.</p>
+<p>NextClone and CloneDetective are freely available and open-source on
+github (<a href="https://github.com/phipsonlab/NextClone"
+class="uri">https://github.com/phipsonlab/NextClone</a> and <a
+href="https://github.com/phipsonlab/CloneDetective"
+class="uri">https://github.com/phipsonlab/CloneDetective</a>).
+Documentations and tutorials for both NextClone and CloneDetective can
+be found at (xxx).</p>
 </div>
 <div id="authors" class="section level1 unnumbered">
 <h1 class="unnumbered">Authors</h1>
@@ -510,8 +539,8 @@ Massachusetts, USA</p>
 <div id="analysis" class="section level2">
 <h2>Analysis</h2>
 <ol style="list-style-type: decimal">
-<li><a href="NGS_data_analysis.html">NGS data</a></li>
-<li><a href="sc_data_analysis.html">scRNAseq data</a></li>
+<li><a href="DNAseq_data_analysis.html">DNA-seq data</a></li>
+<li><a href="sc_data_analysis.html">scRNA-seq data</a></li>
 </ol>
 </div>
 </div>

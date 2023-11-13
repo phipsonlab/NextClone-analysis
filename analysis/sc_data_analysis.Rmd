@@ -9,8 +9,7 @@ editor_options:
 
 ## Introduction
 
-Working directory for NextClone run: `/vast/projects/Goel_senescence/nextclone_dev/07_analysis/pilot_dataset/02_run_nextclone/output_20231108_v2`
-
+Analysis for scRNA-seq data of MCF7 cell line tagged with ClonMapper protocol.
 
 ```{r message=FALSE, warning=FALSE}
 library(data.table)

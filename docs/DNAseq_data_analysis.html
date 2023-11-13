@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-10-11" />
 
-<title>NGS data analysis</title>
+<title>DNA-seq data analysis</title>
 
 <script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -351,7 +351,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">NGS data analysis</h1>
+<h1 class="title toc-ignore">DNA-seq data analysis</h1>
 <h4 class="author">Givanna Putri</h4>
 <h4 class="date">2023-10-11</h4>
 
@@ -382,7 +382,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-11-09
+<strong>Last updated:</strong> 2023-11-13
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -516,15 +516,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree24b5a73d3e7662430104f5e58a4f1a9b188fc2edtargetblank24b5a73a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree9a79d31092da2ab7c6c9effa1ee8bd5210587224targetblank9a79d31a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/phipsonlab/NextClone-analysis/tree/24b5a73d3e7662430104f5e58a4f1a9b188fc2ed" target="_blank">24b5a73</a>
+<a href="https://github.com/phipsonlab/NextClone-analysis/tree/9a79d31092da2ab7c6c9effa1ee8bd5210587224" target="_blank">9a79d31</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree24b5a73d3e7662430104f5e58a4f1a9b188fc2edtargetblank24b5a73a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree9a79d31092da2ab7c6c9effa1ee8bd5210587224targetblank9a79d31a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -534,7 +534,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/phipsonlab/NextClone-analysis/tree/24b5a73d3e7662430104f5e58a4f1a9b188fc2ed" target="_blank">24b5a73</a>.
+<a href="https://github.com/phipsonlab/NextClone-analysis/tree/9a79d31092da2ab7c6c9effa1ee8bd5210587224" target="_blank">9a79d31</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -557,16 +557,13 @@ Ignored files:
     Ignored:    data/nextclone_out/.DS_Store
 
 Untracked files:
-    Untracked:  analysis/sc_data_analysis.Rmd
-    Untracked:  data/nextclone_out/ngs_clone_barcode_counts_20231025.csv
-    Untracked:  data/nextclone_out/ngs_clone_barcode_counts_20231109.csv
-    Untracked:  data/nextclone_out/sc_clone_barcodes_20231108.csv
-    Untracked:  data/nextclone_out/sc_clone_barcodes_20231109.csv
+    Untracked:  data/nextclone_out/dnaseq_clone_barcode_counts_20231109.csv
 
 Unstaged changes:
-    Modified:   analysis/NGS_data_analysis.Rmd
-    Deleted:    data/nextclone_out/ngs_clone_barcode_counts.csv
-    Deleted:    data/nextclone_out/sc_clone_barcodes.csv
+    Modified:   analysis/DNAseq_data_analysis.Rmd
+    Modified:   analysis/index.Rmd
+    Modified:   analysis/sc_data_analysis.Rmd
+    Deleted:    data/nextclone_out/ngs_clone_barcode_counts_20231109.csv
 
 </code></pre>
 <p>
@@ -584,8 +581,8 @@ have uncommitted changes.
 
 <p>
 These are the previous versions of the repository in which changes were
-made to the R Markdown (<code>analysis/NGS_data_analysis.Rmd</code>) and
-HTML (<code>docs/NGS_data_analysis.html</code>) files. If you’ve
+made to the R Markdown (<code>analysis/DNAseq_data_analysis.Rmd</code>)
+and HTML (<code>docs/DNAseq_data_analysis.html</code>) files. If you’ve
 configured a remote Git repository (see <code>?wflow_git_remote</code>),
 click on the hyperlinks in the table below to view the files as they
 were in that past version.
@@ -617,16 +614,17 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/phipsonlab/NextClone-analysis/blob/1662b0c96deb5f5949d8935c8a77990ddea7cb69/analysis/NGS_data_analysis.Rmd" target="_blank">1662b0c</a>
+<a href="https://github.com/phipsonlab/NextClone-analysis/blob/9a79d31092da2ab7c6c9effa1ee8bd5210587224/analysis/DNAseq_data_analysis.Rmd" target="_blank">9a79d31</a>
 </td>
 <td>
 Givanna Putri
 </td>
 <td>
-2023-10-20
+2023-11-13
 </td>
 <td>
-analysis for ozsinglecell 23
+wflow_rename("analysis/NGS_data_analysis.Rmd",
+"analysis/DNAseq_data_analysis.Rmd")
 </td>
 </tr>
 <tr>
@@ -634,16 +632,17 @@ analysis for ozsinglecell 23
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/phipsonlab/NextClone-analysis/1662b0c96deb5f5949d8935c8a77990ddea7cb69/docs/NGS_data_analysis.html" target="_blank">1662b0c</a>
+<a href="https://rawcdn.githack.com/phipsonlab/NextClone-analysis/9a79d31092da2ab7c6c9effa1ee8bd5210587224/docs/DNAseq_data_analysis.html" target="_blank">9a79d31</a>
 </td>
 <td>
 Givanna Putri
 </td>
 <td>
-2023-10-20
+2023-11-13
 </td>
 <td>
-analysis for ozsinglecell 23
+wflow_rename("analysis/NGS_data_analysis.Rmd",
+"analysis/DNAseq_data_analysis.Rmd")
 </td>
 </tr>
 </tbody>
@@ -655,10 +654,8 @@ analysis for ozsinglecell 23
 </div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>Analysis for the 8k and 10k library of MCF7 cell line tagged with
-ClonMapper protocol.</p>
-<p>Working directory for NextClone run:
-<code>/vast/projects/Goel_senescence/nextclone_dev/07_analysis/ngs_v1/run_nextclone/output_20231109</code></p>
+<p>Analysis for the DNA-seq 8k and 10k library of MCF7 cell line tagged
+with ClonMapper protocol.</p>
 <pre class="r"><code>library(CloneDetective)
 library(data.table)
 library(ggplot2)
@@ -667,7 +664,7 @@ library(scales)</code></pre>
 <div id="read-in-data" class="section level1">
 <h1>Read in data</h1>
 <p>NextClone and pycashier output:</p>
-<pre class="r"><code>clones_nxclone &lt;- fread(&quot;data/nextclone_out/ngs_clone_barcode_counts_20231109.csv&quot;)
+<pre class="r"><code>clones_nxclone &lt;- fread(&quot;data/nextclone_out/dnaseq_clone_barcode_counts_20231109.csv&quot;)
 # The samples in the sample_name column is way too complicated. 
 # Let&#39;s create a new column.
 clones_nxclone[, sample_name_simple := gsub(&quot;vexGFP-&quot;, &quot;&quot;, gsub(&quot;_.*&quot;, &quot;&quot;, sample_name))]
@@ -725,7 +722,7 @@ n_barcodes_long[, filtering_threshold := factor(
 
 ggplot(n_barcodes_long, aes(x=factor(filtering_threshold), y=n_barcode, fill=tool)) +
   geom_bar(stat=&quot;identity&quot;, position=position_dodge()) +
-  theme_bw(base_size = 18) +
+  theme_bw() +
   theme(
     axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
     legend.position=&quot;bottom&quot;
@@ -736,9 +733,9 @@ ggplot(n_barcodes_long, aes(x=factor(filtering_threshold), y=n_barcode, fill=too
     y = &quot;No. of barcodes&quot;,
     x = &quot;Filtering thresholds&quot;,
     fill = &quot;Pipeline&quot;,
-    title = &quot;No. of barcodes retrieved for 8k and 10k NGS data&quot;
+    title = &quot;No. of barcodes retrieved for DNA-seq data&quot;
   )</code></pre>
-<p><img src="figure/NGS_data_analysis.Rmd/unnamed-chunk-4-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p><img src="figure/DNAseq_data_analysis.Rmd/unnamed-chunk-4-1.png" width="960" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
 Past versions of unnamed-chunk-4-1.png
@@ -763,45 +760,19 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/phipsonlab/NextClone-analysis/blob/1662b0c96deb5f5949d8935c8a77990ddea7cb69/docs/figure/NGS_data_analysis.Rmd/unnamed-chunk-4-1.png" target="_blank">1662b0c</a>
+<a href="https://github.com/phipsonlab/NextClone-analysis/blob/9a79d31092da2ab7c6c9effa1ee8bd5210587224/docs/figure/DNAseq_data_analysis.Rmd/unnamed-chunk-4-1.png" target="_blank">9a79d31</a>
 </td>
 <td>
 Givanna Putri
 </td>
 <td>
-2023-10-20
+2023-11-13
 </td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>For nextclone only.</p>
-<pre class="r"><code>n_barcodes_nxclone_long &lt;- melt(n_barcodes_nxclone, id.vars = c(&quot;sample&quot;, &quot;tool&quot;), 
-                        variable.name = &quot;filtering_threshold&quot;,
-                        value.name = &quot;n_barcode&quot;)
-
-n_barcodes_nxclone_long[, filtering_threshold := factor(
-  gsub(&quot;_&quot;,&quot; &quot;,gsub(&quot;at_least_&quot;, &quot;&gt;= &quot;, filtering_threshold)),
-  levels = filtering_threshold_levels
-)]
-
-ggplot(n_barcodes_nxclone_long, aes(x=factor(filtering_threshold), y=n_barcode)) +
-  geom_bar(stat=&quot;identity&quot;, position=position_dodge(), fill=&quot;steelblue&quot;) +
-  theme_bw(base_size = 18) +
-  theme(
-    axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
-    legend.position=&quot;bottom&quot;
-  ) +
-  facet_wrap(~ sample) +
-  scale_y_continuous(breaks = pretty_breaks(n=10), label = label_comma(accuracy = 1)) +
-  labs(
-    y = &quot;Number of barcodes&quot;,
-    x = &quot;Filtering thresholds&quot;,
-    fill = &quot;Pipeline&quot;,
-    title = &quot;Number of barcodes retrieved for 8k and 10k NGS data&quot;
-  )</code></pre>
-<p><img src="figure/NGS_data_analysis.Rmd/unnamed-chunk-5-1.png" width="960" style="display: block; margin: auto;" /></p>
 </div>
 <div id="ordered-abundance-plot" class="section level1">
 <h1>Ordered abundance plot</h1>
@@ -830,7 +801,44 @@ plt &lt;- plt +
     y = &quot;Proportion of cells per sample&quot;
   )
 plt</code></pre>
-<p><img src="figure/NGS_data_analysis.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/DNAseq_data_analysis.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/phipsonlab/NextClone-analysis/blob/9a79d31092da2ab7c6c9effa1ee8bd5210587224/docs/figure/DNAseq_data_analysis.Rmd/unnamed-chunk-6-1.png" target="_blank">9a79d31</a>
+</td>
+<td>
+Givanna Putri
+</td>
+<td>
+2023-11-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="using-ngs-data-to-plan-single-cell-experiment"
 class="section level1">
@@ -860,26 +868,13 @@ plt &lt;- draw_ordered_abundance_plot(
     subtitle = &#39;Cell counts computed after projection to 20,000 cells&#39;
   )
 plt</code></pre>
-<p><img src="figure/NGS_data_analysis.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>plt &lt;- draw_ordered_abundance_plot(
-  count_data = clones_nxclone_proportion,
-  y_axis_column = &#39;projected_10000_confidence_1&#39;,
-  facet_column = &#39;sample_name_simple&#39;
-) + 
-  geom_point(size = 0.5, colour=&#39;blue&#39;) +
-  labs(
-    y = &#39;Number of cells&#39;,
-    title = &#39;Number of cells assigned to each barcode&#39;,
-    subtitle = &#39;Cell counts computed after projection to 10,000 cells&#39;
-  )
-plt</code></pre>
-<p><img src="figure/NGS_data_analysis.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/DNAseq_data_analysis.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
-Past versions of unnamed-chunk-9-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div id="fig-unnamed-chunk-7-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -898,13 +893,63 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/phipsonlab/NextClone-analysis/blob/1662b0c96deb5f5949d8935c8a77990ddea7cb69/docs/figure/NGS_data_analysis.Rmd/unnamed-chunk-9-1.png" target="_blank">1662b0c</a>
+<a href="https://github.com/phipsonlab/NextClone-analysis/blob/9a79d31092da2ab7c6c9effa1ee8bd5210587224/docs/figure/DNAseq_data_analysis.Rmd/unnamed-chunk-7-1.png" target="_blank">9a79d31</a>
 </td>
 <td>
 Givanna Putri
 </td>
 <td>
-2023-10-20
+2023-11-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>plt &lt;- draw_ordered_abundance_plot(
+  count_data = clones_nxclone_proportion,
+  y_axis_column = &#39;projected_10000_confidence_1&#39;,
+  facet_column = &#39;sample_name_simple&#39;
+) + 
+  geom_point(size = 0.5, colour=&#39;blue&#39;) +
+  labs(
+    y = &#39;Number of cells&#39;,
+    title = &#39;Number of cells assigned to each barcode&#39;,
+    subtitle = &#39;Cell counts computed after projection to 10,000 cells&#39;
+  )
+plt</code></pre>
+<p><img src="figure/DNAseq_data_analysis.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/phipsonlab/NextClone-analysis/blob/9a79d31092da2ab7c6c9effa1ee8bd5210587224/docs/figure/DNAseq_data_analysis.Rmd/unnamed-chunk-8-1.png" target="_blank">9a79d31</a>
+</td>
+<td>
+Givanna Putri
+</td>
+<td>
+2023-11-13
 </td>
 </tr>
 </tbody>
@@ -929,7 +974,7 @@ proj_n_clones_retained_long &lt;- melt(proj_n_clones_retained, id.vars = c(&quot
 
 ggplot(proj_n_clones_retained_long, aes(x=factor(filtering_threshold), y=n_barcode)) +
   geom_bar(stat=&quot;identity&quot;, position=position_dodge(), fill=&quot;darkorange&quot;) +
-  theme_bw(base_size = 18) +
+  theme_bw() +
   theme(
     axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
     legend.position=&quot;bottom&quot;
@@ -937,12 +982,50 @@ ggplot(proj_n_clones_retained_long, aes(x=factor(filtering_threshold), y=n_barco
   facet_wrap(~ sample) +
   scale_y_continuous(breaks = pretty_breaks(n=6),label = label_comma(accuracy = 1)) +
   labs(
-    y = &quot;Number of barcodes&quot;,
+    y = &quot;No. of barcodes&quot;,
     x = &quot;Filtering thresholds&quot;,
     fill = &quot;Pipeline&quot;,
-    title = &quot;Number of barcodes estimated for 8k and 10k NGS data&quot;
+    title = &quot;No. of barcodes estimated for DNA-seq data&quot;,
+    subtitle = &quot;When capturing 10,000 cells&quot;
   )</code></pre>
-<p><img src="figure/NGS_data_analysis.Rmd/unnamed-chunk-10-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p><img src="figure/DNAseq_data_analysis.Rmd/unnamed-chunk-9-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/phipsonlab/NextClone-analysis/blob/9a79d31092da2ab7c6c9effa1ee8bd5210587224/docs/figure/DNAseq_data_analysis.Rmd/unnamed-chunk-9-1.png" target="_blank">9a79d31</a>
+</td>
+<td>
+Givanna Putri
+</td>
+<td>
+2023-11-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>What are the frequency of top 200 clone barcodes? We can present this
 by computing the number of cells tagged by top 200 clone barcodes.</p>
 <pre class="r"><code>top_threshold &lt;- 200
@@ -967,46 +1050,10 @@ top_barcodes &lt;- get_top_barcodes_and_cum_sum(
     y = &quot;Number of cells&quot;,
     x = &quot;Barcode Ranking&quot;,
     title = paste(&quot;Projected no. of cells for top&quot;, top_threshold, &quot;most abundant clones&quot;),
+    subtitle = &quot;When capturing 10,000 cells&quot;,
     colour = &quot;Library&quot;
   )</code></pre>
-<p><img src="figure/NGS_data_analysis.Rmd/unnamed-chunk-12-1.png" width="960" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
-Past versions of unnamed-chunk-12-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-12-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/phipsonlab/NextClone-analysis/blob/1662b0c96deb5f5949d8935c8a77990ddea7cb69/docs/figure/NGS_data_analysis.Rmd/unnamed-chunk-12-1.png" target="_blank">1662b0c</a>
-</td>
-<td>
-Givanna Putri
-</td>
-<td>
-2023-10-20
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/DNAseq_data_analysis.Rmd/unnamed-chunk-11-1.png" width="960" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

@@ -382,7 +382,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-11-09
+<strong>Last updated:</strong> 2023-11-13
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -420,10 +420,10 @@ changes </a>
 <div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown is untracked by Git. To know which version of the R
-Markdown file created these results, you’ll want to first commit it to
-the Git repo. If you’re still working on the analysis, you can ignore
-this warning. When you’re finished, you can run
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
 <code>wflow_publish</code> to commit the R Markdown file and build the
 HTML.</p>
 </div>
@@ -516,15 +516,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree24b5a73d3e7662430104f5e58a4f1a9b188fc2edtargetblank24b5a73a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree9a79d31092da2ab7c6c9effa1ee8bd5210587224targetblank9a79d31a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/phipsonlab/NextClone-analysis/tree/24b5a73d3e7662430104f5e58a4f1a9b188fc2ed" target="_blank">24b5a73</a>
+<a href="https://github.com/phipsonlab/NextClone-analysis/tree/9a79d31092da2ab7c6c9effa1ee8bd5210587224" target="_blank">9a79d31</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree24b5a73d3e7662430104f5e58a4f1a9b188fc2edtargetblank24b5a73a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree9a79d31092da2ab7c6c9effa1ee8bd5210587224targetblank9a79d31a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -534,7 +534,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/phipsonlab/NextClone-analysis/tree/24b5a73d3e7662430104f5e58a4f1a9b188fc2ed" target="_blank">24b5a73</a>.
+<a href="https://github.com/phipsonlab/NextClone-analysis/tree/9a79d31092da2ab7c6c9effa1ee8bd5210587224" target="_blank">9a79d31</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -557,16 +557,13 @@ Ignored files:
     Ignored:    data/nextclone_out/.DS_Store
 
 Untracked files:
-    Untracked:  analysis/sc_data_analysis.Rmd
-    Untracked:  data/nextclone_out/ngs_clone_barcode_counts_20231025.csv
-    Untracked:  data/nextclone_out/ngs_clone_barcode_counts_20231109.csv
-    Untracked:  data/nextclone_out/sc_clone_barcodes_20231108.csv
-    Untracked:  data/nextclone_out/sc_clone_barcodes_20231109.csv
+    Untracked:  data/nextclone_out/dnaseq_clone_barcode_counts_20231109.csv
 
 Unstaged changes:
-    Modified:   analysis/NGS_data_analysis.Rmd
-    Deleted:    data/nextclone_out/ngs_clone_barcode_counts.csv
-    Deleted:    data/nextclone_out/sc_clone_barcodes.csv
+    Modified:   analysis/DNAseq_data_analysis.Rmd
+    Modified:   analysis/index.Rmd
+    Modified:   analysis/sc_data_analysis.Rmd
+    Deleted:    data/nextclone_out/ngs_clone_barcode_counts_20231109.csv
 
 </code></pre>
 <p>
@@ -612,6 +609,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/phipsonlab/NextClone-analysis/blob/44218c126b237dcc75bdb0d59db17741d35864cf/analysis/sc_data_analysis.Rmd" target="_blank">44218c1</a>
+</td>
+<td>
+Givanna Putri
+</td>
+<td>
+2023-11-10
+</td>
+<td>
+updates
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/phipsonlab/NextClone-analysis/44218c126b237dcc75bdb0d59db17741d35864cf/docs/sc_data_analysis.html" target="_blank">44218c1</a>
+</td>
+<td>
+Givanna Putri
+</td>
+<td>
+2023-11-10
+</td>
+<td>
+updates
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -689,8 +720,8 @@ analysis for ozsinglecell 23
 </div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>Working directory for NextClone run:
-<code>/vast/projects/Goel_senescence/nextclone_dev/07_analysis/pilot_dataset/02_run_nextclone/output_20231108_v2</code></p>
+<p>Analysis for scRNA-seq data of MCF7 cell line tagged with ClonMapper
+protocol.</p>
 <pre class="r"><code>library(data.table)
 library(DropletUtils)
 library(CloneDetective)
@@ -757,6 +788,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/phipsonlab/NextClone-analysis/blob/44218c126b237dcc75bdb0d59db17741d35864cf/docs/figure/sc_data_analysis.Rmd/unnamed-chunk-7-1.png" target="_blank">44218c1</a>
+</td>
+<td>
+Givanna Putri
+</td>
+<td>
+2023-11-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/phipsonlab/NextClone-analysis/blob/24b5a73d3e7662430104f5e58a4f1a9b188fc2ed/docs/figure/sc_data_analysis.Rmd/unnamed-chunk-7-1.png" target="_blank">24b5a73</a>

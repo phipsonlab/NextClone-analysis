@@ -1,5 +1,5 @@
 ---
-title: "NGS data analysis"
+title: "DNA-seq data analysis"
 author: "Givanna Putri"
 date: "2023-10-11"
 output: workflowr::wflow_html
@@ -9,9 +9,7 @@ editor_options:
 
 ## Introduction
 
-Analysis for the 8k and 10k library of MCF7 cell line tagged with ClonMapper protocol.
-
-Working directory for NextClone run: `/vast/projects/Goel_senescence/nextclone_dev/07_analysis/ngs_v1/run_nextclone/output_20231109`
+Analysis for the DNA-seq 8k and 10k library of MCF7 cell line tagged with ClonMapper protocol.
 
 ```{r}
 library(CloneDetective)
@@ -22,10 +20,12 @@ library(scales)
 
 # Read in data
 
-NextClone and pycashier output:
+NextClone and pycashier output.
+
+The command used to generate NextClone output is available in `code` folder.
 
 ```{r}
-clones_nxclone <- fread("data/nextclone_out/ngs_clone_barcode_counts_20231109.csv")
+clones_nxclone <- fread("data/nextclone_out/dnaseq_clone_barcode_counts_20231109.csv")
 # The samples in the sample_name column is way too complicated. 
 # Let's create a new column.
 clones_nxclone[, sample_name_simple := gsub("vexGFP-", "", gsub("_.*", "", sample_name))]
@@ -90,7 +90,7 @@ n_barcodes_long[, filtering_threshold := factor(
 
 ggplot(n_barcodes_long, aes(x=factor(filtering_threshold), y=n_barcode, fill=tool)) +
   geom_bar(stat="identity", position=position_dodge()) +
-  theme_bw(base_size = 18) +
+  theme_bw() +
   theme(
     axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
     legend.position="bottom"
@@ -101,39 +101,9 @@ ggplot(n_barcodes_long, aes(x=factor(filtering_threshold), y=n_barcode, fill=too
     y = "No. of barcodes",
     x = "Filtering thresholds",
     fill = "Pipeline",
-    title = "No. of barcodes retrieved for 8k and 10k NGS data"
+    title = "No. of barcodes retrieved for DNA-seq data"
   )
 ```
-
-For nextclone only.
-
-```{r fig.width=10, fig.height=8}
-n_barcodes_nxclone_long <- melt(n_barcodes_nxclone, id.vars = c("sample", "tool"), 
-                        variable.name = "filtering_threshold",
-                        value.name = "n_barcode")
-
-n_barcodes_nxclone_long[, filtering_threshold := factor(
-  gsub("_"," ",gsub("at_least_", ">= ", filtering_threshold)),
-  levels = filtering_threshold_levels
-)]
-
-ggplot(n_barcodes_nxclone_long, aes(x=factor(filtering_threshold), y=n_barcode)) +
-  geom_bar(stat="identity", position=position_dodge(), fill="steelblue") +
-  theme_bw(base_size = 18) +
-  theme(
-    axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
-    legend.position="bottom"
-  ) +
-  facet_wrap(~ sample) +
-  scale_y_continuous(breaks = pretty_breaks(n=10), label = label_comma(accuracy = 1)) +
-  labs(
-    y = "Number of barcodes",
-    x = "Filtering thresholds",
-    fill = "Pipeline",
-    title = "Number of barcodes retrieved for 8k and 10k NGS data"
-  )
-```
-
 
 # Ordered abundance plot
 
@@ -237,7 +207,7 @@ proj_n_clones_retained_long <- melt(proj_n_clones_retained, id.vars = c("sample"
 
 ggplot(proj_n_clones_retained_long, aes(x=factor(filtering_threshold), y=n_barcode)) +
   geom_bar(stat="identity", position=position_dodge(), fill="darkorange") +
-  theme_bw(base_size = 18) +
+  theme_bw() +
   theme(
     axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
     legend.position="bottom"
@@ -245,10 +215,11 @@ ggplot(proj_n_clones_retained_long, aes(x=factor(filtering_threshold), y=n_barco
   facet_wrap(~ sample) +
   scale_y_continuous(breaks = pretty_breaks(n=6),label = label_comma(accuracy = 1)) +
   labs(
-    y = "Number of barcodes",
+    y = "No. of barcodes",
     x = "Filtering thresholds",
     fill = "Pipeline",
-    title = "Number of barcodes estimated for 8k and 10k NGS data"
+    title = "No. of barcodes estimated for DNA-seq data",
+    subtitle = "When capturing 10,000 cells"
   )
 
 ```
@@ -284,6 +255,7 @@ ggplot(top_barcodes, aes(x=barcode_rank, y=cum_sum_projected_10000_confidence_1,
     y = "Number of cells",
     x = "Barcode Ranking",
     title = paste("Projected no. of cells for top", top_threshold, "most abundant clones"),
+    subtitle = "When capturing 10,000 cells",
     colour = "Library"
   )
 ```

@@ -10,7 +10,9 @@ editor_options:
 
 # Abstract {-}
 
-The study of clonal dynamics has fundamentally transformed our understanding of cellular heterogeneity and lineage trajectories. Recent advances in lineage-tracing methods, such as the ClonMapper or SPLINTR protocols combine DNA barcoding with single-cell RNA sequencing (scRNAseq), allowing biologists to not only trace the lineage and clonal evolution of individual cells but also analyse changes in their transcriptomic profile over time. However, despite these advances, there remains a gap in computational methods for efficient extraction and quantification of clonal barcodes from both barcoded scRNAseq data and DNA sequencing data. The latter is often termed as NGS data, and exclusively sequences clone barcode reads using Next Generation Sequencing (NGS). To address this, we introduce NextClone, a comprehensive Nextflow pipeline developed for this very purpose. Designed with scalability at its core, NextClone is capable of processing several samples concurrently, fully leveraging the vast resources in high-performance computing platforms by distributing the barcode extraction and quantification process for a given sample across multiple parallel jobs. Integral to its design is Flexiplex, a versatile and error-tolerant tool for assigning reads to a predetermined list of clonal barcodes. This allows NextClone to be used for any clonal barcoding approach where a list of known barcodes can be supplied to the pipeline. We successfully applied NextClone to scRNAseq and NGS datasets from an MCF7 breast cancer cell line tagged using the ClonMapper lineage-tracing protocol. Our results demonstrate its ability to precisely and robustly quantify clonal barcodes. NextClone is open-source and available on Github (https://github.com/phipsonlab/NextClone). 
+The study of clonal dynamics has significantly advanced our understanding of cellular heterogeneity and lineage trajectories. With recent developments in lineage-tracing protocols such as ClonMapper or SPLINTR, which combine DNA barcoding with single-cell RNA sequencing (scRNA-seq), biologists can trace the lineage and evolutionary paths of individual clones while simultaneously observing their transcriptomic changes over time. Here, we present NextClone and CloneDetective, an integrated highly scalable Nextflow pipeline and R package for efficient extraction and quantification of clonal barcodes from scRNA-seq data and DNA sequencing data tagged with lineage-tracing barcodes. We applied both NextClone and CloneDetective to data from a barcoded MCF7 cell line, and demonstrate their important role for advancing clonal analysis in the era of high-throughput sequencing.
+
+NextClone and CloneDetective are freely available and open-source on github (https://github.com/phipsonlab/NextClone and https://github.com/phipsonlab/CloneDetective). Documentations and tutorials for both NextClone and CloneDetective can be found at (xxx).
 
 # Authors {-}
 
@@ -24,7 +26,7 @@ Givanna Putri ^1^, Nichelle Pires ^2^, Nadia Davidson ^1^, Catherine Blyth ^2^, 
 
 ## Analysis
 
-1. [NGS data](NGS_data_analysis.html)
-2. [scRNAseq data](sc_data_analysis.html)
+1. [DNA-seq data](DNAseq_data_analysis.html)
+2. [scRNA-seq data](sc_data_analysis.html)
 
 
