@@ -1,5 +1,5 @@
 ---
-title: "sc_data_analysis_withCloneDetective"
+title: "scRNA-seq data analysis"
 author: "Givanna Putri"
 date: "2023-11-08"
 output: workflowr::wflow_html
@@ -18,13 +18,15 @@ library(CloneDetective)
 library(scater)
 ```
 
-Load data
+## Load data
 
 ```{r}
 raw_clone_data <- fread("data/nextclone_out/sc_clone_barcodes_20231109.csv")
 ```
 
-Convert to expression
+
+## Generate cell by clone matrix
+
 ```{r}
 cell_by_clone_mat <- generate_cell_clone_barcode_matrix(cell_clone_bcode_dt = raw_clone_data)
 ```
@@ -63,7 +65,7 @@ plt <- draw_treemap(
 plt
 ```
 
-# Assign clone barcodes to cells
+## Assign clone barcodes to cells
 
 ```{r}
 sce_with_clone <- assign_and_embed_clones(
