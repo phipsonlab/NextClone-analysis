@@ -12,7 +12,7 @@ editor_options:
 
 The study of clonal dynamics has significantly advanced our understanding of cellular heterogeneity and lineage trajectories. With recent developments in lineage-tracing protocols such as ClonMapper or SPLINTR, which combine DNA barcoding with single-cell RNA sequencing (scRNA-seq), biologists can trace the lineage and evolutionary paths of individual clones while simultaneously observing their transcriptomic changes over time. Here, we present NextClone and CloneDetective, an integrated highly scalable Nextflow pipeline and R package for efficient extraction and quantification of clonal barcodes from scRNA-seq data and DNA sequencing data tagged with lineage-tracing barcodes. We applied both NextClone and CloneDetective to data from a barcoded MCF7 cell line, and demonstrate their important role for advancing clonal analysis in the era of high-throughput sequencing.
 
-NextClone and CloneDetective are freely available and open-source on github (https://github.com/phipsonlab/NextClone and https://github.com/phipsonlab/CloneDetective). Documentations and tutorials for both NextClone and CloneDetective can be found at (xxx).
+NextClone and CloneDetective are freely available and open-source on github (https://github.com/phipsonlab/NextClone and https://github.com/phipsonlab/CloneDetective). Documentations and tutorials for both NextClone and CloneDetective can be found at https://phipsonlab.github.io/NextClone/index.html and https://phipsonlab.github.io/CloneDetective/index.html respectively.
 
 # Authors {-}
 
