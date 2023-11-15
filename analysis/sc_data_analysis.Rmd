@@ -21,7 +21,7 @@ library(scater)
 ## Load data
 
 ```{r}
-raw_clone_data <- fread("data/nextclone_out/sc_clone_barcodes_20231109.csv")
+raw_clone_data <- fread("data/nextclone_out/sc_clone_barcodes_20231115.csv")
 ```
 
 
@@ -76,18 +76,27 @@ colData(sce_with_clone)
 
 ```
 
-Count how many cells assigned to most dominant clones.
+Interrogate the clone assignments further.
 
 ```{r}
 clone_bcode_criteria <- as.data.table(colData(sce_with_clone))
 clone_bcode_criteria <- data.table(table(clone_bcode_criteria$clone_barcode_criteria))
+setnames(clone_bcode_criteria, "V1", "criteria")
+clone_bcode_criteria
+```
 
-# proportion. of cells with multiple clone barcodes?
-clone_bcode_criteria[, multiclone := ! V1 %in% c("single_clone", "no_clones_found")]
-clone_bcode_criteria[, .(prop = sum(N) / sum(clone_bcode_criteria$N)), by = multiclone]
+What proportion of cells where multiple clone barcodes were detected?
 
-# proportion of multiclones assigned to most dominant clone?
-clone_bcode_criteria[, .(prop = N / sum(N)), by = multiclone]
+```{r}
+clone_bcode_criteria[, prop := N / dim(sce)[2]]
+```
+
+What proportion of multiclone cells assigned the most dominant clone barcode?
+
+```{r}
+n_multiclone <- clone_bcode_criteria[criteria %in% c("clone_from_edit_distance", "dominant_clone_moreThan_0_5")]
+n_multiclone[, prop := N / sum(n_multiclone$N)]
+n_multiclone
 ```
 
 Export the clone assignments as data.table which can later be saved.
