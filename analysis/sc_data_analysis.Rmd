@@ -20,8 +20,10 @@ library(scater)
 
 ## Load data
 
+The command used to generate NextClone output is available in code folder.
+
 ```{r}
-raw_clone_data <- fread("data/nextclone_out/sc_clone_barcodes_20231115.csv")
+raw_clone_data <- fread("data/nextclone_out/sc_clone_barcodes_20231117.csv")
 ```
 
 
@@ -31,7 +33,45 @@ raw_clone_data <- fread("data/nextclone_out/sc_clone_barcodes_20231115.csv")
 cell_by_clone_mat <- generate_cell_clone_barcode_matrix(cell_clone_bcode_dt = raw_clone_data)
 ```
 
-Incorporate the cell by gene matrix.
+## Load the cell by gene matrix
+
+This matrix is the filtered count matrix generated using cellranger version 7.1.0
+aligning to hg38 genome, specifically the GRCh38-2020-A available on https://www.10xgenomics.com/support/software/cell-ranger/downloads.
+
+The following Nextflow pipeline was used:
+
+```{r eval=FALSE}
+#!/usr/bin/env nextflow
+
+process run_cellranger_count {
+    cpus 24
+    memory '100 GB'
+    time '24 hours'
+    module 'cellranger/7.1.0'
+    publishDir "$params.publish_dir",  mode: 'copy'
+
+    input:
+        val sample_name
+    
+    output:
+        path "${sample_name}"
+
+    """
+    cellranger count --id=${sample_name} \
+                     --sample=${sample_name} \
+                     --transcriptome=${params.ref_fasta} \
+                     --fastqs=${params.fastqs_dir} \
+                     --localcores=${task.cpus} \
+                     --localmem=${task.memory.toGiga()} \
+                     --nosecondary
+    """
+}
+
+workflow {
+    run_cellranger_count("PilotDataset")
+}
+```
+
 
 ```{r}
 sce <- read10xCounts("data/cellranger_out/filtered_feature_bc_matrix")
@@ -82,13 +122,13 @@ Interrogate the clone assignments further.
 clone_bcode_criteria <- as.data.table(colData(sce_with_clone))
 clone_bcode_criteria <- data.table(table(clone_bcode_criteria$clone_barcode_criteria))
 setnames(clone_bcode_criteria, "V1", "criteria")
-clone_bcode_criteria
 ```
 
 What proportion of cells where multiple clone barcodes were detected?
 
 ```{r}
 clone_bcode_criteria[, prop := N / dim(sce)[2]]
+clone_bcode_criteria
 ```
 
 What proportion of multiclone cells assigned the most dominant clone barcode?

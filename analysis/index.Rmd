@@ -26,6 +26,13 @@ Givanna Putri ^1^, Nichelle Pires ^2^, Nadia Davidson ^1^, Catherine Blyth ^2^, 
 
 ## Analysis
 
+The FASTQ files for the DNA-seq data are available on zenodo: https://zenodo.org/doi/10.5281/zenodo.10121942.
+
+The BAM file for the scRNA-seq data is available on zenodo: https://zenodo.org/doi/10.5281/zenodo.10129133 and https://zenodo.org/doi/10.5281/zenodo.10129624
+
+The BAM file for the scRNA-seq data was obtained by running cellranger version 7.1.0 
+aligning to hg38 genome, specifically the GRCh38-2020-A available on https://www.10xgenomics.com/support/software/cell-ranger/downloads.
+
 1. [DNA-seq data](DNAseq_data_analysis.html)
 2. [scRNA-seq data](sc_data_analysis.html)
 

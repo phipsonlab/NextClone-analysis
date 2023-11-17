@@ -24,6 +24,31 @@ NextClone and pycashier output.
 
 The command used to generate NextClone output is available in `code` folder.
 
+Pycashier is available on [Github](https://github.com/brocklab/pycashier).
+The output used in this analysis was generated using the following configuration file:
+
+```{r eval=FALSE}
+[extract]
+input = "./fastqs_trimmed"
+skip_trimming = true
+threads = 8
+filter_count = 1
+output = "outs"
+pipeline = "pipeline"
+error = 0.1
+length = 20
+upstream_adapter = "ATCTTGTGGAAAGGACGAAACACCG"
+downstream_adapter = "GTTTTAGAGCTAGAAATAGCAAGTT"
+quality = 30
+unqualified_percent = 20
+ratio = 3
+distance = 1
+# filter_percent = 0.005
+offset = 1
+# fastp_args =
+```
+
+
 ```{r}
 clones_nxclone <- fread("data/nextclone_out/dnaseq_clone_barcode_counts_20231114.csv")
 # The samples in the sample_name column is way too complicated. 
