@@ -1,5 +1,3 @@
 # NextClone-analysis
 
-A [workflowr][] project.
-
-[workflowr]: https://github.com/workflowr/workflowr
+Analysis for the NextClone and CloneDetective paper.
