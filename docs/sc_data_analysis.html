@@ -390,7 +390,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-11-15
+<strong>Last updated:</strong> 2023-11-17
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -521,15 +521,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree673cea9e0f0ef50c482d5426904d3096658f9d99targetblank673cea9a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree81b59b13bf7ea02f206f887a5b7f1ffd90db9265targetblank81b59b1a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/phipsonlab/NextClone-analysis/tree/673cea9e0f0ef50c482d5426904d3096658f9d99" target="_blank">673cea9</a>
+<a href="https://github.com/phipsonlab/NextClone-analysis/tree/81b59b13bf7ea02f206f887a5b7f1ffd90db9265" target="_blank">81b59b1</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree673cea9e0f0ef50c482d5426904d3096658f9d99targetblank673cea9a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomphipsonlabNextCloneanalysistree81b59b13bf7ea02f206f887a5b7f1ffd90db9265targetblank81b59b1a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -539,7 +539,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/phipsonlab/NextClone-analysis/tree/673cea9e0f0ef50c482d5426904d3096658f9d99" target="_blank">673cea9</a>.
+<a href="https://github.com/phipsonlab/NextClone-analysis/tree/81b59b13bf7ea02f206f887a5b7f1ffd90db9265" target="_blank">81b59b1</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -562,10 +562,12 @@ Ignored files:
     Ignored:    data/nextclone_out/.DS_Store
 
 Untracked files:
-    Untracked:  data/nextclone_out/sc_clone_barcodes_20231115.csv
+    Untracked:  code/run_nextclone_dnaseq.sh
+    Untracked:  code/run_nextclone_sc.sh
+    Untracked:  data/nextclone_out/sc_clone_barcodes_20231117.csv
 
 Unstaged changes:
-    Deleted:    data/nextclone_out/sc_clone_barcodes_20231109.csv
+    Deleted:    data/nextclone_out/sc_clone_barcodes_20231115.csv
 
 </code></pre>
 <p>
@@ -611,6 +613,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/phipsonlab/NextClone-analysis/blob/81b59b13bf7ea02f206f887a5b7f1ffd90db9265/analysis/sc_data_analysis.Rmd" target="_blank">81b59b1</a>
+</td>
+<td>
+Givanna Putri
+</td>
+<td>
+2023-11-17
+</td>
+<td>
+wflow_publish("analysis/*")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/phipsonlab/NextClone-analysis/02dd0cb8b353fbff73d57bea6c61a76418b5e458/docs/sc_data_analysis.html" target="_blank">02dd0cb</a>
+</td>
+<td>
+Givanna Putri
+</td>
+<td>
+2023-11-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -833,12 +869,51 @@ library(scater)</code></pre>
 </div>
 <div id="load-data" class="section level2">
 <h2>Load data</h2>
-<pre class="r"><code>raw_clone_data &lt;- fread(&quot;data/nextclone_out/sc_clone_barcodes_20231115.csv&quot;)</code></pre>
+<p>The command used to generate NextClone output is available in code
+folder.</p>
+<pre class="r"><code>raw_clone_data &lt;- fread(&quot;data/nextclone_out/sc_clone_barcodes_20231117.csv&quot;)</code></pre>
 </div>
 <div id="generate-cell-by-clone-matrix" class="section level2">
 <h2>Generate cell by clone matrix</h2>
 <pre class="r"><code>cell_by_clone_mat &lt;- generate_cell_clone_barcode_matrix(cell_clone_bcode_dt = raw_clone_data)</code></pre>
-<p>Incorporate the cell by gene matrix.</p>
+</div>
+<div id="load-the-cell-by-gene-matrix" class="section level2">
+<h2>Load the cell by gene matrix</h2>
+<p>This matrix is the filtered count matrix generated using cellranger
+version 7.1.0 aligning to hg38 genome, specifically the GRCh38-2020-A
+available on <a
+href="https://www.10xgenomics.com/support/software/cell-ranger/downloads"
+class="uri">https://www.10xgenomics.com/support/software/cell-ranger/downloads</a>.</p>
+<p>The following Nextflow pipeline was used:</p>
+<pre class="r"><code>#!/usr/bin/env nextflow
+
+process run_cellranger_count {
+    cpus 24
+    memory &#39;100 GB&#39;
+    time &#39;24 hours&#39;
+    module &#39;cellranger/7.1.0&#39;
+    publishDir &quot;$params.publish_dir&quot;,  mode: &#39;copy&#39;
+
+    input:
+        val sample_name
+    
+    output:
+        path &quot;${sample_name}&quot;
+
+    &quot;&quot;&quot;
+    cellranger count --id=${sample_name} \
+                     --sample=${sample_name} \
+                     --transcriptome=${params.ref_fasta} \
+                     --fastqs=${params.fastqs_dir} \
+                     --localcores=${task.cpus} \
+                     --localmem=${task.memory.toGiga()} \
+                     --nosecondary
+    &quot;&quot;&quot;
+}
+
+workflow {
+    run_cellranger_count(&quot;PilotDataset&quot;)
+}</code></pre>
 <pre class="r"><code>sce &lt;- read10xCounts(&quot;data/cellranger_out/filtered_feature_bc_matrix&quot;)</code></pre>
 <pre><code>as(&lt;dgTMatrix&gt;, &quot;dgCMatrix&quot;) is deprecated since Matrix 1.5-0; do as(., &quot;CsparseMatrix&quot;) instead</code></pre>
 <pre class="r"><code>sce</code></pre>
@@ -873,66 +948,7 @@ clones found.</p>
     valid_cells_bcodes = valid_cells_10x
 )
 plt</code></pre>
-<p><img src="figure/sc_data_analysis.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
-Past versions of unnamed-chunk-7-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-7-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/phipsonlab/NextClone-analysis/blob/44218c126b237dcc75bdb0d59db17741d35864cf/docs/figure/sc_data_analysis.Rmd/unnamed-chunk-7-1.png" target="_blank">44218c1</a>
-</td>
-<td>
-Givanna Putri
-</td>
-<td>
-2023-11-10
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/phipsonlab/NextClone-analysis/blob/24b5a73d3e7662430104f5e58a4f1a9b188fc2ed/docs/figure/sc_data_analysis.Rmd/unnamed-chunk-7-1.png" target="_blank">24b5a73</a>
-</td>
-<td>
-Givanna Putri
-</td>
-<td>
-2023-11-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/phipsonlab/NextClone-analysis/blob/1662b0c96deb5f5949d8935c8a77990ddea7cb69/docs/figure/sc_data_analysis.Rmd/unnamed-chunk-7-1.png" target="_blank">1662b0c</a>
-</td>
-<td>
-Givanna Putri
-</td>
-<td>
-2023-10-20
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/sc_data_analysis.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="assign-clone-barcodes-to-cells" class="section level2">
 <h2>Assign clone barcodes to cells</h2>
@@ -971,16 +987,16 @@ colData(sce_with_clone)</code></pre>
 <p>Interrogate the clone assignments further.</p>
 <pre class="r"><code>clone_bcode_criteria &lt;- as.data.table(colData(sce_with_clone))
 clone_bcode_criteria &lt;- data.table(table(clone_bcode_criteria$clone_barcode_criteria))
-setnames(clone_bcode_criteria, &quot;V1&quot;, &quot;criteria&quot;)
-clone_bcode_criteria</code></pre>
-<pre><code>                      criteria    N
-1:    clone_from_edit_distance  691
-2: dominant_clone_moreThan_0_5 1344
-3:             no_clones_found 2815
-4:                single_clone 2978</code></pre>
+setnames(clone_bcode_criteria, &quot;V1&quot;, &quot;criteria&quot;)</code></pre>
 <p>What proportion of cells where multiple clone barcodes were
 detected?</p>
-<pre class="r"><code>clone_bcode_criteria[, prop := N / dim(sce)[2]]</code></pre>
+<pre class="r"><code>clone_bcode_criteria[, prop := N / dim(sce)[2]]
+clone_bcode_criteria</code></pre>
+<pre><code>                      criteria    N       prop
+1:    clone_from_edit_distance  691 0.08827287
+2: dominant_clone_moreThan_0_5 1344 0.17169136
+3:             no_clones_found 2815 0.35960654
+4:                single_clone 2978 0.38042923</code></pre>
 <p>What proportion of multiclone cells assigned the most dominant clone
 barcode?</p>
 <pre class="r"><code>n_multiclone &lt;- clone_bcode_criteria[criteria %in% c(&quot;clone_from_edit_distance&quot;, &quot;dominant_clone_moreThan_0_5&quot;)]
