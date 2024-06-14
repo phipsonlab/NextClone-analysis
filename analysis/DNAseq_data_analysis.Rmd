@@ -71,6 +71,7 @@ clones_pycashier <- rbindlist(clones_pycashier)
 clones_pycashier[, sample := factor(sample, levels = c("8k", "10k"))]
 ```
 
+
 ## Number of unique barcodes
 
 Count the number of unique barcodes with at least x number of cells.
@@ -99,6 +100,16 @@ n_barcodes_pycashier[, tool := 'PyCashier']
 n_barcodes <- rbind(n_barcodes_nxclone, n_barcodes_pycashier)
 ```
 
+The reviewer believes 8k and 10k are not good name for datasets. 
+Rename them to dataset A and B.
+
+```{r}
+new_dataset_name <- data.table(
+    sample = c("8k", "10k"),
+    new_sample_name = c("DNA-seq (dataset A)", "DNA-seq (dataset B)")
+)
+```
+
 Plot bar chart that compares the number of unique barcodes retrieved by both
 workflows.
 
@@ -113,6 +124,8 @@ n_barcodes_long[, filtering_threshold := factor(
   levels = filtering_threshold_levels
 )]
 
+n_barcodes_long <- merge.data.table(n_barcodes_long, new_dataset_name, sort = FALSE)
+
 ggplot(n_barcodes_long, aes(x=factor(filtering_threshold), y=n_barcode, fill=tool)) +
   geom_bar(stat="identity", position=position_dodge()) +
   theme_bw() +
@@ -120,7 +133,7 @@ ggplot(n_barcodes_long, aes(x=factor(filtering_threshold), y=n_barcode, fill=too
     axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
     legend.position="bottom"
   ) +
-  facet_wrap(~ sample) +
+  facet_wrap(~ new_sample_name) +
   scale_y_continuous(breaks = pretty_breaks(n=10), label = label_comma(accuracy = 1)) +
   labs(
     y = "No. of barcodes",
@@ -145,13 +158,22 @@ clones_nxclone_filtered <- convert_count_to_proportion(
   grouping_col = "sample_name_simple",
   count_column = "read_count"
 )
+
+clones_nxclone_filtered <- merge.data.table(
+    clones_nxclone_filtered,
+    new_dataset_name,
+    by.x = "sample_name_simple",
+    by.y = "sample",
+    sort = FALSE
+)
+
 ```
 
 
 ```{r}
 plt <- draw_ordered_abundance_plot(
   count_data = clones_nxclone_filtered, 
-  facet_column = "sample_name_simple",
+  facet_column = "new_sample_name",
   y_axis_column = "read_proportion"
 )
 plt <- plt +
@@ -183,10 +205,18 @@ clones_nxclone_proportion <- project_clones(
   project_amnt = c(10000, 20000)
 )
 
+clones_nxclone_proportion <- merge.data.table(
+    clones_nxclone_proportion,
+    new_dataset_name,
+    by.x = "sample_name_simple",
+    by.y = "sample",
+    sort = FALSE
+)
+
 plt <- draw_ordered_abundance_plot(
   count_data = clones_nxclone_proportion,
   y_axis_column = 'projected_20000_confidence_1',
-  facet_column = 'sample_name_simple'
+  facet_column = 'new_sample_name'
 ) + 
   geom_point(size = 0.5, colour='forestgreen') +
   labs(
@@ -201,7 +231,7 @@ plt
 plt <- draw_ordered_abundance_plot(
   count_data = clones_nxclone_proportion,
   y_axis_column = 'projected_10000_confidence_1',
-  facet_column = 'sample_name_simple'
+  facet_column = 'new_sample_name'
 ) + 
   geom_point(size = 0.5, colour='blue') +
   labs(
@@ -220,7 +250,7 @@ thresholds <- seq(10, 30, 5)
 proj_n_clones_retained <- count_retained_clones(
   count_data = clones_nxclone_proportion,
   thresholds = thresholds,
-  grouping_col = "sample_name_simple",
+  grouping_col = "new_sample_name",
   count_column = "projected_10000_confidence_1"
 )
 names(proj_n_clones_retained) <- c("sample", paste(">=", thresholds, "cells"))
@@ -258,7 +288,7 @@ top_threshold <- 200
 top_barcodes <- get_top_barcodes_and_cum_sum(
   count_data = clones_nxclone_proportion,
   count_column = "projected_10000_confidence_1",
-  grouping_col = "sample_name_simple",
+  grouping_col = "new_sample_name",
   top_threshold = top_threshold
 )
 ```
@@ -267,7 +297,7 @@ Create a line chart that show cumulative number of cells.
 
 ```{r fig.width=10, fig.height=10}
 ggplot(top_barcodes, aes(x=barcode_rank, y=cum_sum_projected_10000_confidence_1, 
-                         group=sample_name_simple, colour = sample_name_simple)) +
+                         group=new_sample_name, colour = new_sample_name)) +
   geom_line(linewidth=1) +
   theme_bw(base_size = 16) +
   scale_y_continuous(breaks = pretty_breaks(n=10), labels = label_comma(accuracy = 1)) +
@@ -281,7 +311,7 @@ ggplot(top_barcodes, aes(x=barcode_rank, y=cum_sum_projected_10000_confidence_1,
     x = "Barcode Ranking",
     title = paste("Projected no. of cells for top", top_threshold, "most abundant clones"),
     subtitle = "When capturing 10,000 cells",
-    colour = "Library"
+    colour = "Dataset"
   )
 ```
 

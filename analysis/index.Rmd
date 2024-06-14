@@ -35,5 +35,6 @@ aligning to hg38 genome, specifically the GRCh38-2020-A available on https://www
 
 1. [DNA-seq data](DNAseq_data_analysis.html)
 2. [scRNA-seq data](sc_data_analysis.html)
+3. [runtime benchmarking](benchmarking_duration.html)
 
 

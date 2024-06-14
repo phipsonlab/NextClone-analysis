@@ -1,0 +1,16 @@
+﻿dataset,duration
+10k_nchunk10_report,8h 27m 58s
+8k_nchunk10_report,9h 48m 10s
+8k_nchunk20_report,8h 22m 12s
+8k_nchunk30_report,4h 21m 33s
+8k_nchunk40_report,3h 17m 27s
+8k_nchunk50_report,2h 26m 42s
+10k_nchunk30_report,4h 14m 37s
+10k_nchunk40_report,3h 26m 17s
+10k_nchunk50_report,2h 36m 2s
+10k_nchunk20_report,6h 20m 48s
+report_sc_nchunk10,4h 54m 51s
+report_sc_nchunk20,2h 38m 24s
+report_sc_nchunk30,1h 57m 37s
+report_sc_nchunk40,1h 35m 42s
+report_sc_nchunk50,1h 25m 9s
